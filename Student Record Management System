@@ -1,0 +1,52 @@
+// Student Record System
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char name[50];
+    int studentid;
+    float marks;
+} student;
+
+void getStudentInfo(student *s) {
+    printf("Enter student name: ");
+    scanf("%s", s->name); // Read student name
+    printf("Enter student ID: ");
+    scanf("%d", &s->studentid); // Read student ID
+    printf("Enter student marks: ");
+    scanf("%f", &s->marks); // Read student marks
+}
+
+void displayStudentInfo(student s) {
+    printf("\nStudent Name: %s\n", s.name);
+    printf("Student ID: %d\n", s.studentid);
+    printf("Marks: %.2f\n", s.marks);
+}
+
+int main() {
+    int n, i;
+    printf("Enter the number of students: ");
+    scanf("%d", &n); // Read the number of students
+
+    student *students = (student *)malloc(n * sizeof(student)); // Allocate memory for n students
+    if (students == NULL) {
+        printf("Memory allocation failed!\n");
+        return 1; // Exit if memory allocation fails
+    }
+
+    // Get student information
+    for (i = 0; i < n; i++) {
+        printf("\nEnter details for student %d:\n", i + 1);
+        getStudentInfo(&students[i]);
+    }
+
+    // Display student information
+    printf("\nStudent Records:\n");
+    for (i = 0; i < n; i++) {
+        displayStudentInfo(students[i]);
+    }
+
+    free(students); // Free allocated memory
+    return 0;
+}
