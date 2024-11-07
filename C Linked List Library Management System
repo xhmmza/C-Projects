@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    char title[50];
+    char author[50];
+    int year;
+    int copies;
+} Book;
+
+typedef struct Node {
+    Book data;
+    struct Node* next;
+} Node;
+
+Node* createNode(Book book) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = book;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void addBook(Node** head, Book book) {
+    Node* newNode = createNode(book);
+    newNode->next = *head;
+    *head = newNode;
+}
+
+void deleteBook(Node** head, int id) {
+    Node *temp = *head, *prev = NULL;
+    if (temp != NULL && temp->data.id == id) {
+        *head = temp->next;
+        free(temp);
+        return;
+    }
+    while (temp != NULL && temp->data.id != id) {
+        prev = temp;
+        temp = temp->next;
+    }
+    if (temp == NULL) return;
+    prev->next = temp->next;
+    free(temp);
+}
+
+Node* searchBook(Node* head, const char* title) {
+    Node* current = head;
+    while (current != NULL) {
+        if (strcmp(current->data.title, title) == 0)
+            return current;
+        current = current->next;
+    }
+    return NULL;
+}
+
+void displayBooks(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        printf("ID: %d\nTitle: %s\nAuthor: %s\nYear: %d\nCopies: %d\n\n",
+               current->data.id, current->data.title, current->data.author,
+               current->data.year, current->data.copies);
+        current = current->next;
+    }
+}
+
+void saveToFile(Node* head, const char* filename) {
+    FILE* file = fopen(filename, "w");
+    if (file == NULL) return;
+    Node* current = head;
+    while (current != NULL) {
+        fprintf(file, "%d %s %s %d %d\n", current->data.id, current->data.title,
+                current->data.author, current->data.year, current->data.copies);
+        current = current->next;
+    }
+    fclose(file);
+}
+
+void loadFromFile(Node** head, const char* filename) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) return;
+    Book book;
+    while (fscanf(file, "%d %49s %49s %d %d", &book.id, book.title, book.author,
+                  &book.year, &book.copies) != EOF) {
+        addBook(head, book);
+    }
+    fclose(file);
+}
+
+int main() {
+    Node* head = NULL;
+    Book book1 = {1, "CProgramming", "AuthorA", 2020, 5};
+    Book book2 = {2, "DataStructures", "AuthorB", 2021, 3};
+    
+    addBook(&head, book1);
+    addBook(&head, book2);
+    
+    displayBooks(head);
+    
+    saveToFile(head, "library.txt");
+    loadFromFile(&head, "library.txt");
+    
+    return 0;
+}
