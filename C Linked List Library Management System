@@ -1,3 +1,4 @@
+//linked list library management 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
