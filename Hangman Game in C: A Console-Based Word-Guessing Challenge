@@ -1,0 +1,47 @@
+#include<stdio.h>
+#include<string.h>
+#include<ctype.h>
+#define MAX_TRIES 5
+void updatemaskedword(char word[], char maskedword[], char guess){
+    for (int i = 0;word[i]!='\0'; i++){
+        if(tolower(word[i]) == tolower(guess)){
+            maskedword[i] = word[i];
+        }
+    }
+}
+int iswordguessed(char maskedword[]){
+    return strchr(maskedword, '_') == NULL;
+}
+int main(){
+    char word[] = "Hamza";
+    int wordlength = strlen(word);
+    char maskedword[wordlength + 1];
+    int tries = MAX_TRIES;
+    char guessedletter;
+
+for (int i = 0; i < wordlength; i++){
+    maskedword[i] = '_';
+}
+maskedword[wordlength] = '\0';
+while(tries > 0){
+    printf("\nCurrent word: %s\n", maskedword);
+    printf("Remaining guesses: %d\n", tries);
+    printf("Enter a letter to guess: ");
+    scanf(" %c", &guessedletter);
+    if (strchr(word, tolower(guessedletter)) != NULL || strchr(word, toupper(guessedletter)) != NULL){
+        printf("Good guess!\n");
+        updatemaskedword(word, maskedword, guessedletter);
+    } else {
+        printf("Wrong Guess\n");
+        tries--;
+    }
+    if (iswordguessed(maskedword)){
+        printf("You guessed the word: %s\n", word);
+        break;
+    }
+}
+if (tries == 0){
+    printf("Sorry you ran out of guesses");
+}
+return 0;
+}
